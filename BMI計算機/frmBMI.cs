@@ -1,0 +1,89 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BMI計算機
+{
+    public partial class frmBMI : Form
+    {
+        string[] strResultList = { "體重過輕", "健康體位", "體位過重", "輕度肥胖", "中度肥胖", "重度肥胖" };
+        Color[] colorList = { Color.Blue, Color.Green, Color.Orange, Color.DarkOrange, Color.Red, Color.Purple };
+
+        public frmBMI()
+        {
+            InitializeComponent();
+        }
+
+        private void btnRun_Click(object sender, EventArgs e)
+        {
+            bool isHeightValid = double.TryParse(txtHeight.Text, out double height);
+            bool isWeightValid = double.TryParse(txtWeight.Text, out double weight);
+            bool isAgeValid = int.TryParse(txtAge.Text, out int age);
+
+
+            if (isHeightValid && isWeightValid && isAgeValid && height > 0 && weight > 0 && age > 0)
+            {
+                height /= 100;
+                double bmi = weight / (height * height);
+
+                string strResult = "";
+                Color colorResult = Color.Black;
+                int resultIndex = 0;
+                if (bmi < 18.5)
+                {
+                    resultIndex = 0;
+                }
+                else if (bmi < 24)
+                {
+                    resultIndex = 1;
+                }
+                else if (bmi < 27)
+                {
+                    resultIndex = 2;
+                }
+                else if (bmi < 30)
+                {
+                    resultIndex = 3;
+                }
+                else if (bmi < 35)
+                {
+                    resultIndex = 4;
+                }
+                else
+                {
+                    resultIndex = 5;
+                }
+                strResult = strResultList[resultIndex];
+                colorResult = colorList[resultIndex];
+
+                lblBMIResult.Text = $"{bmi:F2} ({strResult})";
+                lblBMIResult.BackColor = colorResult;
+
+                int genderCode = 0;
+                if (rdoMale.Checked)
+                {
+                    genderCode = 1;
+                }
+                else if (rdoFemale.Checked)
+                {
+                    genderCode = 0;
+                }
+
+                double bfp = (1.2 * bmi) + (0.23 * (double)age) - (10.8 * (double)genderCode) - 5.4;
+
+                lblBFPResult.Text = $"{bfp:F2} %";
+            }
+
+            else
+            {
+                MessageBox.Show("請輸入有效的數字。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+    }
+}
